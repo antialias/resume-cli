@@ -2,7 +2,7 @@ var fs = require('fs');
 var path = require('path');
 var http = require('http');
 var opn = require('opn');
-var static = require('node-static');
+var nodeStatic = require('node-static');
 var readline = require('readline');
 
 var builder = require('./builder');
@@ -35,7 +35,7 @@ module.exports = function(port, theme, silent, dir, resumeFilename) {
       fs.mkdirSync(dir);
     }
 
-    var file = new static.Server(path.join(process.cwd(), dir), { cache: 1 });
+    var file = new nodeStatic.Server(path.join(process.cwd(), dir), { cache: 1 });
     http.createServer(function(req, res) {
         if(req.url === '/' || req.url === '/index.html') {
             reBuildResume(theme, dir, resumeFilename, serveFile.bind(this, file, req, res));
