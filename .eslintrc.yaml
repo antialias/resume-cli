@@ -1,0 +1,15 @@
+parserOptions:
+  ecmaVersion: 9
+  sourceType: module
+env:
+  node: true
+extends:
+  - "plugin:json/recommended"
+overrides:
+  - files:
+    - "*.yaml"
+    plugins:
+    - yaml
+ignorePatterns:
+  - package-lock.json
+  - '!.eslintrc.yaml'
