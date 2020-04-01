@@ -1,6 +1,6 @@
 {
   "name": "resumed-cli",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "The JSON Resume command line interface",
   "main": "build/main.js",
   "engines": {
