@@ -1,4 +1,4 @@
-# resume-cli
+# resumed-cli
 
 [![](https://badge.fury.io/js/resumed-cli.svg)](https://www.npmjs.org/package/resumed-cli)
 
