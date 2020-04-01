@@ -1,7 +1,5 @@
-import fs from "fs";
 import request from "superagent";
 import chalk from "chalk";
-import { join } from "path";
 import { resumeJson as example } from "resume-schema";
 import getResume from "./get-resume";
 import { themeServer } from "./config";
@@ -14,7 +12,7 @@ async function sendExportHTML({ resume, themeName }) {
     .post(url)
     .send({ resume })
     .set("Accept", "application/json");
-  if (200 !== status) {
+  if (status !== 200) {
     throw new Error(
       `error ${status} when attempting to render resume using remote theme at ${url}: ${text}`
     );

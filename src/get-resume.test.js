@@ -1,5 +1,5 @@
-import getResume from "./get-resume";
 import Assembler from "stream-json/Assembler";
+import getResume from "./get-resume";
 
 describe("get-resume", () => {
   it("should stream in the data of the resume from a file", async () => {

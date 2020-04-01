@@ -16,7 +16,7 @@ export default ({ themeName: inputThemeName, resume }) => {
   } catch (e) {
     // The file does not exist.
   }
-  if (theme && "function" === typeof theme.render) {
+  if (theme && typeof theme.render === "function") {
     return theme;
   }
 

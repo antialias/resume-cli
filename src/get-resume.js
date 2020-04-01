@@ -7,7 +7,7 @@ import Assembler from "stream-json/Assembler";
 export default ({ path }) => {
   const assembler = Assembler.connectTo(
     chain([
-      "-" === path
+      path === "-"
         ? process.stdin
         : createReadStream(resolve(process.cwd(), path)),
       parser(),

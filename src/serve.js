@@ -20,7 +20,7 @@ export default function ({ port, themeName, silent, dir, path }) {
     fs.mkdirSync(dir);
   }
 
-  var file = new nodeStatic.Server(join(process.cwd(), dir), { cache: 1 });
+  const file = new nodeStatic.Server(join(process.cwd(), dir), { cache: 1 });
   http
     .createServer(async (req, res) => {
       if (req.url !== "/" && req.url !== "/index.html") {
@@ -37,8 +37,8 @@ export default function ({ port, themeName, silent, dir, path }) {
     .listen(port);
 
   console.log("");
-  var previewUrl = "http://localhost:" + port;
-  console.log("Preview: " + previewUrl);
+  const previewUrl = `http://localhost:${port}`;
+  console.log(`Preview: ${previewUrl}`);
   console.log("Press ctrl-c to stop");
   console.log("");
 

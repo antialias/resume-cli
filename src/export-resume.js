@@ -10,7 +10,7 @@ import btoa from "btoa";
 import { registryServer, themeServer } from "./config";
 import getTheme from "./get-theme";
 
-var SUPPORTED_FILE_FORMATS = ["html", "pdf"];
+const SUPPORTED_FILE_FORMATS = ["html", "pdf"];
 
 const formatters = {
   async pdf({ resume, fileName, themeName }) {
@@ -46,7 +46,7 @@ const formatters = {
   },
   async html({ resume, fileName, themeName }) {
     const html = getTheme({ themeName, resume }).render(resume);
-    var stream = fs.createWriteStream(
+    const stream = fs.createWriteStream(
       path.resolve(process.cwd(), `${fileName}.html`)
     );
 
@@ -68,7 +68,7 @@ export default async function exportResume({
 }) {
   const fileNameAndFormat = getFileNameAndFormat(fileNameInput, format);
   const { fileName, format: fileFormatToUse } = fileNameAndFormat;
-  const fileExtension = "." + fileFormatToUse;
+  const fileExtension = `.${fileFormatToUse}`;
   const formatter = formatters[fileFormatToUse];
   if (!formatter) {
     throw new Error(`JSON Resume does not support ${fileExtension} format`);
@@ -78,7 +78,7 @@ export default async function exportResume({
 }
 
 function extractFileFormat(fileName) {
-  var dotPos = fileName.lastIndexOf(".");
+  const dotPos = fileName.lastIndexOf(".");
   if (dotPos === -1) {
     return null;
   }
@@ -86,8 +86,8 @@ function extractFileFormat(fileName) {
 }
 
 function getFileNameAndFormat(fileName, format) {
-  var fileFormatFound = extractFileFormat(fileName);
-  var fileFormatToUse = format;
+  const fileFormatFound = extractFileFormat(fileName);
+  let fileFormatToUse = format;
   if (format && fileFormatFound && format === fileFormatFound) {
     fileName = fileName.substring(0, fileName.lastIndexOf("."));
   } else if (fileFormatFound) {
@@ -96,7 +96,7 @@ function getFileNameAndFormat(fileName, format) {
   }
 
   return {
-    fileName: fileName,
+    fileName,
     format: fileFormatToUse,
   };
 }

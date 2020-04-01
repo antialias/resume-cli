@@ -4,7 +4,7 @@ import fs from "fs";
 import colors from "colors";
 import chalk from "chalk"; // slowly replace colors with chalk
 
-var symbols = {
+let symbols = {
   ok: "\u2713",
   err: "\u2717",
 };
@@ -17,12 +17,12 @@ if (process?.platform === "win32") {
   };
 }
 
-var tick = chalk.green(symbols.ok);
-var cross = chalk.red(symbols.err);
+const tick = chalk.green(symbols.ok);
+const cross = chalk.red(symbols.err);
 
-//converts the schema's returned path output, to JS object selection notation.
+// converts the schema's returned path output, to JS object selection notation.
 function pathFormatter(path) {
-  var jsonPath = path.split("/");
+  let jsonPath = path.split("/");
   jsonPath.shift();
   jsonPath = jsonPath.join(".");
   jsonPath = jsonPath.replace(".[", "[");
@@ -58,6 +58,6 @@ export default async function ({ resume }) {
   }
 }
 
-//TODO error handling for single quotes
+// TODO error handling for single quotes
 
 // use json error handler to pinpoint errors

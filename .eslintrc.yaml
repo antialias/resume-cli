@@ -5,9 +5,14 @@ parser: "babel-eslint"
 env:
   node: true
 extends:
+  - airbnb/base
   - "plugin:json/recommended"
   - "plugin:prettier/recommended"
   - "prettier/standard"
+rules:
+  prefer-const: error
+  no-unused-vars: error
+  no-console: off
 overrides:
   - files:
     - "*.yaml"

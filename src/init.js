@@ -1,7 +1,7 @@
 import fs from "fs";
 import read from "read";
-import resumeJson from "../src/init-resume.json";
 import chalk from "chalk"; // slowly replace colors with chalk
+import resumeJson from "./init-resume.json";
 
 function fillInit() {
   console.log(
@@ -37,7 +37,7 @@ function fillInit() {
           resumeJson.basics.email = email;
 
           fs.writeFileSync(
-            process.cwd() + "/resume.json",
+            `${process.cwd()}/resume.json`,
             JSON.stringify(resumeJson, undefined, 2)
           );
 
@@ -92,6 +92,6 @@ function init() {
   }
 }
 
-module.exports = init;
+export default init;
 
-//todo: fix success wording
+// todo: fix success wording

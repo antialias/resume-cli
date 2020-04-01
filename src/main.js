@@ -1,16 +1,16 @@
 #!/usr/bin/env node
 
-//import 'dotenv-safe/config';
+// import 'dotenv-safe/config';
+import program from "commander";
+import colors from "colors";
+import chalk from "chalk";
+import { join, resolve } from "path";
 import pkg from "../package.json";
 import validate from "./validate";
 import init from "./init";
 import getResume from "./get-resume";
 import exportResume from "./export-resume";
 import serve from "./serve";
-import program from "commander";
-import colors from "colors";
-import chalk from "chalk";
-import { join, resolve } from "path";
 
 (async function () {
   program
@@ -90,9 +90,7 @@ import { join, resolve } from "path";
 
   await program.parseAsync(process.argv);
 
-  var validCommands = program.commands.map(function (cmd) {
-    return cmd._name;
-  });
+  const validCommands = program.commands.map((cmd) => cmd._name);
 
   if (!program.args.length) {
     console.log("resume-cli:".cyan, "https://jsonresume.org", "\n");
