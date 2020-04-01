@@ -9,11 +9,21 @@ extends:
   - "plugin:json/recommended"
   - "plugin:prettier/recommended"
   - "prettier/standard"
+plugins:
+  - simple-import-sort
 rules:
+  import/extensions: off
+  import/no-unresolved: error
+  simple-import-sort/sort: error
   prefer-const: error
   no-unused-vars: error
   no-console: off
+  no-underscore-dangle: off
 overrides:
+  - files:
+    - "*.test.js"
+    env:
+      jest: true
   - files:
     - "*.yaml"
     plugins:

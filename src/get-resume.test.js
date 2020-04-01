@@ -1,4 +1,3 @@
-import Assembler from "stream-json/Assembler";
 import getResume from "./get-resume";
 
 describe("get-resume", () => {

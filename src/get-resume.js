@@ -1,15 +1,15 @@
 import { createReadStream } from "fs";
-import { resolve } from "path";
-import { parser } from "stream-json";
+import { resolve as resolvePath } from "path";
 import { chain } from "stream-chain";
+import { parser } from "stream-json";
 import Assembler from "stream-json/Assembler";
 
 export default ({ path }) => {
   const assembler = Assembler.connectTo(
     chain([
-      path === "-"
+      process.stdin.isTTY
         ? process.stdin
-        : createReadStream(resolve(process.cwd(), path)),
+        : createReadStream(resolvePath(process.cwd(), path)),
       parser(),
     ])
   );

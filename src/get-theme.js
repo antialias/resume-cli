@@ -1,35 +1,36 @@
-import { resolve } from "path";
+/* eslint-disable global-require, import/no-dynamic-require */
+import { join, resolve } from "path";
 
-export default ({ themeName: inputThemeName, resume }) => {
+export default ({ name: inputName, resume }) => {
   let packageJson = {};
-  let themeName = inputThemeName;
+  let name = inputName;
 
   try {
     packageJson = require(join(process.cwd(), "package"));
-  } catch (e) {
+  } catch {
     // 'package' module does not exist
   }
 
   let theme;
   try {
     theme = require(join(process.cwd(), packageJson.main || "index"));
-  } catch (e) {
+  } catch {
     // The file does not exist.
   }
   if (theme && typeof theme.render === "function") {
     return theme;
   }
 
-  if ((!themeName || themeName === "-") && resume?.meta) {
-    themeName = resume.meta.theme;
+  if ((!name || name === "-") && resume?.meta) {
+    name = resume.meta.theme;
   }
-  if (!themeName) {
+  if (!name) {
     throw new Error(
       "options.themeName must be defined if a local theme is not present in your project"
     );
   }
-  const fullThemeName = themeName.match("jsonresume-theme-.*")
-    ? themeName
-    : `jsonresume-theme-${themeName}`;
-  return require(resolve(process.cwd(), "node_modules", fullThemeName));
+  const fullName = name.match("jsonresume-theme-.*")
+    ? name
+    : `jsonresume-theme-${name}`;
+  return require(resolve(process.cwd(), "node_modules", fullName));
 };

@@ -1,10 +1,9 @@
-import { promisify } from "util";
-import fs, { writeFile } from "fs";
-import { join } from "path";
+import fs from "fs";
 import http from "http";
-import opn from "opn";
 import nodeStatic from "node-static";
-import readline from "readline";
+import opn from "opn";
+import { join } from "path";
+
 import builder from "./builder";
 
 function serveFile(file, req, res) {

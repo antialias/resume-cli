@@ -1,18 +1,16 @@
-#!/usr/bin/env node
-
-// import 'dotenv-safe/config';
 import program from "commander";
-import colors from "colors";
-import chalk from "chalk";
-import { join, resolve } from "path";
-import pkg from "../package.json";
-import validate from "./validate";
-import init from "./init";
-import getResume from "./get-resume";
-import exportResume from "./export-resume";
-import serve from "./serve";
+import { extname, join } from "path";
 
-(async function () {
+import pkg from "../package.json";
+import exportResume from "./export-resume";
+import getFormatter from "./get-formatter";
+import getResume from "./get-resume";
+import getTheme from "./get-theme";
+import init from "./init";
+import serve from "./serve";
+import validate from "./validate";
+
+(async () => {
   program
     .usage("[command] [options]")
     .version(pkg.version)
@@ -24,7 +22,7 @@ import serve from "./serve";
     )
     .option(
       "-r, --resume <resume filename>",
-      "(default: resume.json)",
+      "(default: stdin if TTY else resume.json)",
       join(process.cwd(), "resume.json")
     );
 
@@ -37,33 +35,59 @@ import serve from "./serve";
     .command("validate")
     .description("Schema validation test your resume.json")
     .action(async ({ parent: { resume: path } }) => {
-      const resume = await getResume(path);
-      const validate = await validate({ resume });
+      await validate({ resume: await getResume(path) });
     });
 
   program
-    .command("export <fileName>")
-    .option("-f, --format <file type extension>")
+    .command(
+      "export [fileName]",
+      "export to fileName, or stdout if unspecified or -"
+    )
+    .option(
+      "-f, --format <file type extension>",
+      "accepts pdf or html. defaults to whatever is detected from fileName's extension else html",
+      "html"
+    )
     .description(
       "Export locally to .html or .pdf. Supply a --format <file format> flag and argument to specify export format."
     )
-    .action(async (fileNameInput, { parent: { resume: path } }) => {
-      const resume = await getResume({ path });
-      await validate({ resume });
-      const { fileName, format, fileExtension } = await exportResume({
-        resume,
+    .action(
+      async (
         fileNameInput,
-        program,
-      });
-      console.log(
-        chalk.green(
-          `Done! Find your new ${format} resume at:\n${resolve(
-            process.cwd(),
-            fileName + fileExtension
-          )}`
-        )
-      );
-    });
+        { format: inputFormat, parent: { theme: themeName, resume: path } }
+      ) => {
+        const resume = await getResume({ path });
+        const theme = await getTheme({ name: themeName, resume });
+        let format;
+        if (fileNameInput) {
+          format = extname(fileNameInput);
+        }
+        format = format || inputFormat;
+        if (!format) {
+          throw new Error(
+            "could not infer the requested type to render the resume as"
+          );
+        }
+        [, format] = format.match(/^\.?(.*)$/);
+        const formatter = getFormatter(format);
+        console.error(`rendering resume as ${format}`);
+        await validate({ resume });
+        await exportResume({
+          outputPath: fileNameInput,
+          resume,
+          theme,
+          formatter,
+        });
+        console.error(
+          [
+            `rendered resume as ${format}`,
+            fileNameInput ? `to ${fileNameInput}` : null,
+          ]
+            .filter((x) => x)
+            .join(" ")
+        );
+      }
+    );
 
   program
     .command("serve")

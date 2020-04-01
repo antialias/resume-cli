@@ -1,11 +1,27 @@
-import fs from "fs";
-import read from "read";
 import chalk from "chalk"; // slowly replace colors with chalk
+import fs from "fs";
+import { assign } from "object-path-immutable";
+import readCB from "read";
+import { promisify } from "util";
+import yn from "yn";
+
 import resumeJson from "./init-resume.json";
 
-function fillInit() {
+const read = promisify(readCB);
+const exists = promisify(fs.exists);
+const writeFile = promisify(fs.writeFile);
+
+export default async () => {
+  if (await exists("./resume.json")) {
+    console.log(
+      chalk.yellow("There is already a resume.json file in this directory.")
+    );
+    if (!yn(await read({ prompt: "Do you want to override?:" }))) {
+      process.exit();
+    }
+  }
   console.log(
-    "\nThis utility will generate a resume.json file in your current working directory."
+    "This utility will generate a resume.json file in your current working directory."
   );
   console.log(
     "Fill out your name and email to get started, or leave the fields blank."
@@ -13,85 +29,26 @@ function fillInit() {
   console.log("All fields are optional.\n");
   console.log("Press ^C at any time to quit.");
 
-  read(
-    {
-      prompt: "name: ",
-    },
-    function (er, name) {
-      if (er) {
-        console.log();
-        process.exit();
-      }
+  const name = await read({ prompt: "name: " });
+  const email = await read({ prompt: "email: " });
 
-      read(
-        {
-          prompt: "email: ",
-        },
-        function (er, email) {
-          if (er) {
-            console.log();
-            process.exit();
-          }
-
-          resumeJson.basics.name = name;
-          resumeJson.basics.email = email;
-
-          fs.writeFileSync(
-            `${process.cwd()}/resume.json`,
-            JSON.stringify(resumeJson, undefined, 2)
-          );
-
-          console.log("\nYour resume.json has been created!".green);
-          console.log("");
-          console.log(
-            "To generate a formatted .html .md .txt or .pdf resume from your resume.json"
-          );
-          console.log(
-            "type: `resume export [someFileName]` including file extension eg: `resume export myresume.html`"
-          );
-          console.log(
-            "\nYou can optionally specify an available theme for html and pdf resumes using the --theme flag."
-          );
-          console.log("Example: `resume export myresume.pdf --theme flat`");
-          console.log(
-            "Or simply type: `resume export` and follow the prompts."
-          );
-          console.log("");
-
-          process.exit();
-          callback(true);
-        }
-      );
-    }
+  await writeFile(
+    `${process.cwd()}/resume.json`,
+    JSON.stringify(assign(resumeJson, "basics", { name, email }), undefined, 2)
   );
-}
 
-function init() {
-  if (fs.existsSync("./resume.json")) {
-    console.log(
-      chalk.yellow("There is already a resume.json file in this directory.")
-    );
-    read(
-      {
-        prompt: "Do you want to override? [y/n]:",
-      },
-      function (er, answer) {
-        if (er) {
-          console.log();
-          process.exit();
-        }
-        if (answer === "y") {
-          fillInit();
-        } else {
-          process.exit();
-        }
-      }
-    );
-  } else {
-    fillInit();
-  }
-}
-
-export default init;
-
-// todo: fix success wording
+  console.log("\nYour resume.json has been created!".green);
+  console.log("");
+  console.log(
+    "To generate a formatted .html .md .txt or .pdf resume from your resume.json"
+  );
+  console.log(
+    "type: `resume export [someFileName]` including file extension eg: `resume export myresume.html`"
+  );
+  console.log(
+    "\nYou can optionally specify an available theme for html and pdf resumes using the --theme flag."
+  );
+  console.log("Example: `resume export myresume.pdf --theme flat`");
+  console.log("Or simply type: `resume export` and follow the prompts.");
+  console.log("");
+};

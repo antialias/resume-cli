@@ -1,8 +1,9 @@
-import request from "superagent";
 import chalk from "chalk";
 import { resumeJson as example } from "resume-schema";
-import getResume from "./get-resume";
+import request from "superagent";
+
 import { themeServer } from "./config";
+import getResume from "./get-resume";
 import getTheme from "./get-theme";
 
 async function sendExportHTML({ resume, themeName }) {
@@ -20,12 +21,12 @@ async function sendExportHTML({ resume, themeName }) {
   return text;
 }
 
-export default async function ({ themeName, dir, path }) {
+export default async function ({ themeName, path }) {
   let resume;
   try {
     resume = await getResume({ path });
   } catch (err) {
-    console.log(chalk.yellow("error getting resume from ${path}:"), err);
+    console.log(chalk.yellow(`error getting resume from ${path}:`), err);
     console.log(
       chalk.cyan("Using example resume.json from resume-schema instead...")
     );
@@ -34,7 +35,7 @@ export default async function ({ themeName, dir, path }) {
   let theme;
   try {
     theme = getTheme({ themeName, resume });
-  } catch (err) {
+  } catch {
     console.log(
       "theme could not be found locally, falling back to remote theme server"
     );

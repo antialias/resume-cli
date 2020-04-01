@@ -1,8 +1,6 @@
+import chalk from "chalk"; // slowly replace colors with chalk
 import { validate } from "resume-schema";
 import { promisify } from "util";
-import fs from "fs";
-import colors from "colors";
-import chalk from "chalk"; // slowly replace colors with chalk
 
 let symbols = {
   ok: "\u2713",
@@ -17,7 +15,6 @@ if (process?.platform === "win32") {
   };
 }
 
-const tick = chalk.green(symbols.ok);
 const cross = chalk.red(symbols.err);
 
 // converts the schema's returned path output, to JS object selection notation.
