@@ -1,7 +1,6 @@
 # resume-cli
 
-[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/jsonresume/public?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![Build Status](https://travis-ci.org/jsonresume/resume-cli.svg?branch=master)](https://travis-ci.org/jsonresume/resume-cli) [![Dependency Status](https://david-dm.org/jsonresume/resume-cli.svg)](https://david-dm.org/jsonresume/resume-cli) [![devDependency Status](https://david-dm.org/jsonresume/resume-cli/dev-status.svg)](https://david-dm.org/jsonresume/resume-cli#info=devDependencies)  [![](https://badge.fury.io/js/resume-cli.svg)](https://www.npmjs.org/package/resume-cli)
+[![](https://badge.fury.io/js/resumed-cli.svg)](https://www.npmjs.org/package/resumed-cli)
 
 This is the command line tool for [JSON Resume](https://jsonresume.org), the open source initiative to create a JSON-based standard for resumes.
 
@@ -13,18 +12,18 @@ This is the command line tool for [JSON Resume](https://jsonresume.org), the ope
 Install the command-line tool:
 
 ```
-npm install -g resume-cli
+npm install -g resumed-cli
 ```
 
 
 # Usage
 
-## `resume --help`
+## `resumed --help`
 
 Show a list of options and commands for the <abbr title="Command Line Interface">CLI</abbr>.
 
 
-## `resume init`
+## `resumed init`
 
 Creates a new `resume.json` file in your current working directory.
 
@@ -32,13 +31,13 @@ Complete the `resume.json` with your text editor. Be sure to follow the schema
 (available at http://jsonresume.org).
 
 
-## `resume test`
+## `resumed validate`
 
 Validates your `resume.json` against our schema tests to ensure it complies with 
 the standard. Tries to identify where any errors may be occurring.
 
 
-## `resume export [fileName]`
+## `resumed export [fileName]`
 
 Exports your resume locally in a stylized HTML, Markdown, or PDF format.
 
