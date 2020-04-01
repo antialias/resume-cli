@@ -1,7 +1,7 @@
-var fs = require("fs");
-var read = require("read");
-var resumeJson = require("./init-resume.json");
-var chalk = require("chalk"); // slowly replace colors with chalk
+import fs from "fs";
+import read from "read";
+import resumeJson from "../src/init-resume.json";
+import chalk from "chalk"; // slowly replace colors with chalk
 
 function fillInit() {
   console.log(
@@ -15,9 +15,9 @@ function fillInit() {
 
   read(
     {
-      prompt: "name: "
+      prompt: "name: ",
     },
-    function(er, name) {
+    function (er, name) {
       if (er) {
         console.log();
         process.exit();
@@ -25,9 +25,9 @@ function fillInit() {
 
       read(
         {
-          prompt: "email: "
+          prompt: "email: ",
         },
-        function(er, email) {
+        function (er, email) {
           if (er) {
             console.log();
             process.exit();
@@ -73,9 +73,9 @@ function init() {
     );
     read(
       {
-        prompt: "Do you want to override? [y/n]:"
+        prompt: "Do you want to override? [y/n]:",
       },
-      function(er, answer) {
+      function (er, answer) {
         if (er) {
           console.log();
           process.exit();

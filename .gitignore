@@ -1,3 +1,4 @@
+.env
 node_modules
 resume.json
 !README.md

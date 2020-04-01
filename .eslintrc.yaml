@@ -1,10 +1,13 @@
 parserOptions:
   ecmaVersion: 9
   sourceType: module
+parser: "babel-eslint"
 env:
   node: true
 extends:
   - "plugin:json/recommended"
+  - "plugin:prettier/recommended"
+  - "prettier/standard"
 overrides:
   - files:
     - "*.yaml"
