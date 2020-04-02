@@ -2,6 +2,7 @@ import { program } from "commander";
 import { extname, join } from "path";
 
 import pkg from "../package.json";
+import { themeServer } from "./config";
 import exportResume from "./export-resume";
 import getFormatter from "./get-formatter";
 import getResume from "./get-resume";
@@ -27,6 +28,10 @@ import validate from "./validate";
     .option(
       "-m, --mime <mime type>",
       "input mime type. inferred from the file type. defaults to application/json when reading from stdin. Use `text/yaml` to force input to be parsed as yaml"
+    )
+    .option(
+      "--remote-fallback [url]",
+      `if <theme name> can not be resolved as a local module, then attempt to render the resume by POSTing the resume as JSON to {url}{theme name}. Defaults to ${themeServer} if [url] is unspecified`
     );
 
   program
@@ -54,11 +59,15 @@ import validate from "./validate";
         fileNameInput,
         {
           format: inputFormat,
-          parent: { mime, theme: themeName, resume: path },
+          parent: { remoteFallback, mime, theme: themeName, resume: path },
         }
       ) => {
         const resume = await getResume({ path, mime });
-        const theme = await getTheme({ name: themeName, resume });
+        const theme = await getTheme({
+          remoteFallback,
+          name: themeName,
+          resume,
+        });
         let format;
         if (fileNameInput) {
           format = extname(fileNameInput);
@@ -101,10 +110,14 @@ import validate from "./validate";
         dir,
         silent,
         port,
-        parent: { mime, theme: themeName, resume: path },
+        parent: { remoteFallback, mime, theme: themeName, resume: path },
       }) => {
-        const resume = getResume({ path, mime });
-        const theme = getTheme({ name: themeName, resume });
+        const resume = await getResume({ path, mime });
+        const theme = await getTheme({
+          remoteFallback,
+          name: themeName,
+          resume,
+        });
         await serve({
           theme,
           silent,
@@ -116,15 +129,4 @@ import validate from "./validate";
     );
 
   await program.parseAsync(process.argv);
-
-  const validCommands = program.commands.map((cmd) => cmd._name);
-
-  if (!program.args.length) {
-    console.log("resume-cli:".cyan, "https://jsonresume.org", "\n");
-    program.help();
-  } else if (validCommands.indexOf(process.argv[2]) === -1) {
-    console.log("Invalid argument:".red, process.argv[2]);
-    console.log("resume-cli:".cyan, "https://jsonresume.org", "\n");
-    program.help();
-  }
 })();

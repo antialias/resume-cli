@@ -1,35 +1,8 @@
 /* eslint-disable global-require, import/no-dynamic-require */
-import { join } from "path";
-
 import buildThemeProxy from "./build-theme-proxy";
 import { themeServer } from "./config";
 
-function isTheme(obj) {
-  if (!obj) {
-    return false;
-  }
-  return typeof obj.render === "function";
-}
-
-export default ({ name: inputName, resume, useRemoteFallback = false }) => {
-  let packageJson = {};
-
-  try {
-    packageJson = require(join(process.cwd(), "package"));
-  } catch {
-    // 'package' module does not exist
-  }
-
-  let theme;
-  try {
-    theme = require(join(process.cwd(), packageJson.main || "index"));
-  } catch {
-    // The file does not exist.
-  }
-  if (isTheme(theme)) {
-    return theme;
-  }
-
+export default ({ name: inputName, resume, remoteFallback }) => {
   let name = resume?.meta?.theme || "flat";
   if (inputName) {
     name = inputName;
@@ -53,10 +26,13 @@ export default ({ name: inputName, resume, useRemoteFallback = false }) => {
   if (themeModuleResolvedPath) {
     return require(themeModuleResolvedPath);
   }
-  if (!useRemoteFallback) {
+  if (!remoteFallback) {
     throw new Error(
-      `theme ${modulePath} could not be imported locally. Use --remote-theme-fallback to attempt to render the resume by POSTing it to ${themeServer}${name}`
+      `theme ${modulePath} could not be imported locally. Use --remote-fallback to attempt to render the resume by POSTing it to ${themeServer}${name}`
     );
   }
-  return buildThemeProxy({ server: themeServer, name });
+  return buildThemeProxy({
+    server: typeof remoteFallback === "string" ? remoteFallback : themeServer,
+    name,
+  });
 };
