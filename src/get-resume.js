@@ -11,7 +11,7 @@ const parsers = {
   "text/yaml": (string) => yaml.load(string),
   "application/json": (string) => JSON.parse(string),
 };
-export default async ({ path }) => {
+export default async ({ path, mime: inputMime }) => {
   const pathStat = await stat(path);
   if (pathStat.isDirectory()) {
     return quaff(path);
@@ -19,11 +19,11 @@ export default async ({ path }) => {
   let input;
   let mime;
   if (process.stdin.isTTY && path) {
-    mime = lookup(path);
+    mime = inputMime || lookup(path);
     input = createReadStream(resolvePath(process.cwd(), path));
   }
   if (!input) {
-    mime = lookup(".json");
+    mime = inputMime || lookup(".json");
     input = process.stdin;
   }
   const resumeString = await toString(input);

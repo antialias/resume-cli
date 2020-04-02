@@ -60,7 +60,11 @@ Options:
 If no theme is specified, it will look for the file `index.js` and call 
 `render()`. This is useful when developing themes.
 
+## supported resume types
 
+* [`quaff`](https://www.npmjs.com/package/quaff) directory structure:  Maintain parts of your resume in separate directories in a variety of formats
+* [`yaml`](https://yaml.org/): via [`yaml-js`](https://www.npmjs.com/package/yaml-js)
+* [`json`](https://www.json.org/json-en.html): via `JSON.parse`.
 
 # License
 

@@ -21,10 +21,10 @@ async function sendExportHTML({ resume, themeName }) {
   return text;
 }
 
-export default async function ({ themeName, path }) {
+export default async function ({ themeName, path, mime }) {
   let resume;
   try {
-    resume = await getResume({ path });
+    resume = await getResume({ path, mime });
   } catch (err) {
     console.log(chalk.yellow(`error getting resume from ${path}:`), err);
     console.log(
