@@ -4,17 +4,7 @@ import nodeStatic from "node-static";
 import opn from "opn";
 import { join } from "path";
 
-import builder from "./builder";
-
-function serveFile(file, req, res) {
-  req
-    .addListener("end", () => {
-      file.serve(req, res);
-    })
-    .resume();
-}
-
-export default function ({ port, themeName, silent, dir, mime, path }) {
+export default function ({ port, theme, silent, dir, resume }) {
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir);
   }
@@ -23,11 +13,15 @@ export default function ({ port, themeName, silent, dir, mime, path }) {
   http
     .createServer(async (req, res) => {
       if (req.url !== "/" && req.url !== "/index.html") {
-        serveFile(file, req, res);
+        req
+          .addListener("end", () => {
+            file.serve(req, res);
+          })
+          .resume();
         return;
       }
       try {
-        res.end(await builder({ themeName, dir, path, mime }));
+        res.end(await theme.render(resume));
       } catch (err) {
         res.statusCode = 500;
         res.end(err.message);

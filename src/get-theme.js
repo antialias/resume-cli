@@ -1,9 +1,18 @@
 /* eslint-disable global-require, import/no-dynamic-require */
-import { join, resolve } from "path";
+import { join } from "path";
 
-export default ({ name: inputName, resume }) => {
+import buildThemeProxy from "./build-theme-proxy";
+import { themeServer } from "./config";
+
+function isTheme(obj) {
+  if (!obj) {
+    return false;
+  }
+  return typeof obj.render === "function";
+}
+
+export default ({ name: inputName, resume, useRemoteFallback = false }) => {
   let packageJson = {};
-  let name = inputName;
 
   try {
     packageJson = require(join(process.cwd(), "package"));
@@ -17,20 +26,37 @@ export default ({ name: inputName, resume }) => {
   } catch {
     // The file does not exist.
   }
-  if (theme && typeof theme.render === "function") {
+  if (isTheme(theme)) {
     return theme;
   }
 
-  if ((!name || name === "-") && resume?.meta) {
-    name = resume.meta.theme;
-  } else {
+  let name = resume?.meta?.theme || "flat";
+  if (inputName) {
     name = inputName;
   }
-  if (!name) {
-    name = "flat";
+  let modulePath = name;
+  if (/a-z0-9/.test(name[0])) {
+    [, , modulePath] = `jsonresume-theme-${name.match(
+      /^(jsonresume-theme-)?([0-9a-z-]+)$/
+    )}`;
   }
-  const fullName = name.match("jsonresume-theme-.*")
-    ? name
-    : `jsonresume-theme-${name}`;
-  return require(resolve(process.cwd(), "node_modules", fullName));
+  let themeModuleResolvedPath;
+  try {
+    themeModuleResolvedPath = require.resolve(modulePath, {
+      paths: [process.cwd()],
+    });
+  } catch (e) {
+    if (e.code !== "MODULE_NOT_FOUND") {
+      throw e;
+    }
+  }
+  if (themeModuleResolvedPath) {
+    return require(themeModuleResolvedPath);
+  }
+  if (!useRemoteFallback) {
+    throw new Error(
+      `theme ${modulePath} could not be imported locally. Use --remote-theme-fallback to attempt to render the resume by POSTing it to ${themeServer}${name}`
+    );
+  }
+  return buildThemeProxy({ server: themeServer, name });
 };
