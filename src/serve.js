@@ -14,7 +14,7 @@ function serveFile(file, req, res) {
     .resume();
 }
 
-export default function ({ port, themeName, silent, dir, path }) {
+export default function ({ port, themeName, silent, dir, mime, path }) {
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir);
   }
@@ -27,7 +27,7 @@ export default function ({ port, themeName, silent, dir, path }) {
         return;
       }
       try {
-        res.end(await builder({ themeName, dir, path }));
+        res.end(await builder({ themeName, dir, path, mime }));
       } catch (err) {
         res.statusCode = 500;
         res.end(err.message);

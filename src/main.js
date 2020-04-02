@@ -23,6 +23,10 @@ import validate from "./validate";
       "-r, --resume <resume filename>",
       "(default: stdin if TTY else resume.json)",
       join(process.cwd(), "resume.json")
+    )
+    .option(
+      "-m, --mime <mime type>",
+      "input mime type. inferred from the file type. defaults to application/json when reading from stdin. Use `text/yaml` to force input to be parsed as yaml"
     );
 
   program
@@ -48,9 +52,12 @@ import validate from "./validate";
     .action(
       async (
         fileNameInput,
-        { format: inputFormat, parent: { theme: themeName, resume: path } }
+        {
+          format: inputFormat,
+          parent: { mime, theme: themeName, resume: path },
+        }
       ) => {
-        const resume = await getResume({ path });
+        const resume = await getResume({ path, mime });
         const theme = await getTheme({ name: themeName, resume });
         let format;
         if (fileNameInput) {
@@ -94,13 +101,14 @@ import validate from "./validate";
         dir,
         silent,
         port,
-        parent: { theme: themeName, resume: path },
+        parent: { mime, theme: themeName, resume: path },
       }) => {
         await serve({
           themeName,
           silent,
           port,
           dir,
+          mime,
           path,
         });
       }
