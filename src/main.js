@@ -103,13 +103,14 @@ import validate from "./validate";
         port,
         parent: { mime, theme: themeName, resume: path },
       }) => {
+        const resume = getResume({ path, mime });
+        const theme = getTheme({ name: themeName, resume });
         await serve({
-          themeName,
+          theme,
           silent,
           port,
           dir,
-          mime,
-          path,
+          resume,
         });
       }
     );
