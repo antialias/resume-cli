@@ -43,7 +43,7 @@ import validate from "./validate";
     .command("validate")
     .description("Schema validation test your resume.json")
     .action(async ({ parent: { resume: path } }) => {
-      await validate({ resume: await getResume(path) });
+      await validate({ resume: await getResume({ path }) });
     });
 
   program
