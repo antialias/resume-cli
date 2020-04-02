@@ -10,6 +10,7 @@ export default function ({ port, theme, silent, dir, resume }) {
   }
 
   const file = new nodeStatic.Server(join(process.cwd(), dir), { cache: 1 });
+  console.log("the port is", port);
   http
     .createServer(async (req, res) => {
       if (req.url !== "/" && req.url !== "/index.html") {
