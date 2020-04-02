@@ -1,19 +1,35 @@
-import { createReadStream } from "fs";
+import { createReadStream, promises } from "fs";
+import { lookup } from "mime-types";
 import { resolve as resolvePath } from "path";
-import { chain } from "stream-chain";
-import { parser } from "stream-json";
-import Assembler from "stream-json/Assembler";
+import quaff from "quaff";
+import toString from "stream-to-string";
+import yaml from "yaml-js";
 
-export default ({ path }) => {
-  const assembler = Assembler.connectTo(
-    chain([
-      process.stdin.isTTY
-        ? createReadStream(resolvePath(process.cwd(), path))
-        : process.stdin,
-      parser(),
-    ])
-  );
-  return new Promise((resolve) =>
-    assembler.on("done", ({ current }) => resolve(current))
-  );
+const { stat } = promises;
+
+const parsers = {
+  "text/yaml": (string) => yaml.load(string),
+  "application/json": (string) => JSON.parse(string),
+};
+export default async ({ path }) => {
+  const pathStat = await stat(path);
+  if (pathStat.isDirectory()) {
+    return quaff(path);
+  }
+  let input;
+  let mime;
+  if (process.stdin.isTTY && path) {
+    mime = lookup(path);
+    input = createReadStream(resolvePath(process.cwd(), path));
+  }
+  if (!input) {
+    mime = lookup(".json");
+    input = process.stdin;
+  }
+  const resumeString = await toString(input);
+  const parser = parsers[mime];
+  if (!parser) {
+    throw new Error(`no parser available for detected mime type ${mime}`);
+  }
+  return parser(resumeString);
 };
