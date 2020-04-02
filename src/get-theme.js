@@ -1,6 +1,9 @@
 /* eslint-disable global-require, import/no-dynamic-require */
 import buildThemeProxy from "./build-theme-proxy";
 import { themeServer } from "./config";
+import requireResolve from "./utils/require-resolve";
+
+const resolve = requireResolve(require);
 
 export default ({ name: inputName, resume, remoteFallback }) => {
   let name = resume?.meta?.theme || "flat";
@@ -8,14 +11,13 @@ export default ({ name: inputName, resume, remoteFallback }) => {
     name = inputName;
   }
   let modulePath = name;
-  if (/a-z0-9/.test(name[0])) {
-    [, , modulePath] = `jsonresume-theme-${name.match(
-      /^(jsonresume-theme-)?([0-9a-z-]+)$/
-    )}`;
+  if (/[a-zA-Z0-9-]/.test(name[0])) {
+    [, , modulePath] = name.match(/^(jsonresume-theme-)?([0-9a-z-]+)$/);
+    modulePath = `jsonresume-theme-${modulePath}`;
   }
   let themeModuleResolvedPath;
   try {
-    themeModuleResolvedPath = require.resolve(modulePath, {
+    themeModuleResolvedPath = resolve(modulePath, {
       paths: [process.cwd()],
     });
   } catch (e) {
