@@ -20,6 +20,7 @@ import validate from "./validate";
       "-t, --theme <theme name>",
       "Specify theme (modern, crisp, flat: default)"
     )
+    .option("-F, --force", "bypasses schema testing.")
     .option(
       "-r, --resume <resume filename>",
       "(default: stdin if TTY else resume.json)",
@@ -59,7 +60,13 @@ import validate from "./validate";
         fileNameInput,
         {
           format: inputFormat,
-          parent: { remoteFallback, mime, theme: themeName, resume: path },
+          parent: {
+            force,
+            remoteFallback,
+            mime,
+            theme: themeName,
+            resume: path,
+          },
         }
       ) => {
         const resume = await getResume({ path, mime });
@@ -81,7 +88,9 @@ import validate from "./validate";
         [, format] = format.match(/^\.?(.*)$/);
         const formatter = getFormatter(format);
         console.error(`rendering resume as ${format}`);
-        await validate({ resume });
+        if (!force) {
+          await validate({ resume });
+        }
         await exportResume({
           outputPath: fileNameInput,
           resume,
@@ -110,9 +119,12 @@ import validate from "./validate";
         dir,
         silent,
         port,
-        parent: { remoteFallback, mime, theme: themeName, resume: path },
+        parent: { force, remoteFallback, mime, theme: themeName, resume: path },
       }) => {
         const resume = await getResume({ path, mime });
+        if (!force) {
+          await validate({ resume });
+        }
         const theme = await getTheme({
           remoteFallback,
           name: themeName,
