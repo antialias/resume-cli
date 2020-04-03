@@ -2,7 +2,7 @@ import btoa from "btoa";
 import puppeteer from "puppeteer";
 
 export default async function ({ resume, output, theme }) {
-  const html = theme.render(resume);
+  const html = await theme.render(resume);
   const puppeteerLaunchArgs = [];
 
   if (process.env.RESUME_PUPPETEER_NO_SANDBOX) {
