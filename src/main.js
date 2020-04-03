@@ -43,9 +43,9 @@ import validate from "./validate";
   program
     .command("validate")
     .description("Schema validation test your resume.json")
-    .action(async ({ parent: { resume: path } }) => {
-      await validate({ resume: await getResume({ path }) });
-    });
+    .action(async ({ parent: { resume: path } }) =>
+      validate(await getResume({ path }))
+    );
 
   program
     .command("export [fileName]")
@@ -71,7 +71,7 @@ import validate from "./validate";
       ) => {
         const resume = await getResume({ path, mime });
         if (!force) {
-          await validate({ resume });
+          await validate(resume);
         }
         const theme = await getTheme({
           remoteFallback,
@@ -123,7 +123,7 @@ import validate from "./validate";
       }) => {
         const resume = await getResume({ path, mime });
         if (!force) {
-          await validate({ resume });
+          await validate(resume);
         }
         const theme = await getTheme({
           remoteFallback,
@@ -140,5 +140,10 @@ import validate from "./validate";
       }
     );
 
-  await program.parseAsync(process.argv);
+  try {
+    await program.parseAsync(process.argv);
+  } catch (e) {
+    console.error(e.message);
+    process.exit(1);
+  }
 })();

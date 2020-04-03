@@ -1,60 +1,17 @@
-import chalk from "chalk"; // slowly replace colors with chalk
-import { validate } from "resume-schema";
+import schema from "resume-schema/schema.json";
 import { promisify } from "util";
+import ZSchema from "z-schema";
+import ZSchemaErrors from "z-schema-errors";
 
-let symbols = {
-  ok: "\u2713",
-  err: "\u2717",
-};
-
-// win32 console default output fonts don't support tick/cross
-if (process?.platform === "win32") {
-  symbols = {
-    ok: "\u221A",
-    err: "\u00D7",
-  };
-}
-
-const cross = chalk.red(symbols.err);
-
-// converts the schema's returned path output, to JS object selection notation.
-function pathFormatter(path) {
-  let jsonPath = path.split("/");
-  jsonPath.shift();
-  jsonPath = jsonPath.join(".");
-  jsonPath = jsonPath.replace(".[", "[");
-  return jsonPath;
-}
-
-const errorFormatter = (errors) =>
-  errors
-    .map((error) =>
-      [
-        "    ",
-        cross,
-        chalk.gray(
-          pathFormatter(error.path),
-          "is",
-          error.params.type,
-          ", expected",
-          error.params?.expected || error.params.format
-        ),
-      ].join("")
-    )
-    .join("\n");
-
-export default async function ({ resume }) {
+const reporter = ZSchemaErrors.init();
+const validator = new ZSchema();
+const validate = promisify((obj, ...args) =>
+  validator.validate(obj, schema, ...args)
+);
+export default async (resume) => {
   try {
-    await promisify(validate)(resume);
-  } catch (err) {
-    throw new Error(
-      `Cannot export. There are errors in your resume.json schema format.\n${errorFormatter(
-        err
-      )}`
-    );
+    return await validate(resume);
+  } catch (errors) {
+    throw new Error(reporter.extractMessage({ report: { errors } }));
   }
-}
-
-// TODO error handling for single quotes
-
-// use json error handler to pinpoint errors
+};
