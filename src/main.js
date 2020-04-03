@@ -70,6 +70,9 @@ import validate from "./validate";
         }
       ) => {
         const resume = await getResume({ path, mime });
+        if (!force) {
+          await validate({ resume });
+        }
         const theme = await getTheme({
           remoteFallback,
           name: themeName,
@@ -88,9 +91,6 @@ import validate from "./validate";
         [, format] = format.match(/^\.?(.*)$/);
         const formatter = getFormatter(format);
         console.error(`rendering resume as ${format}`);
-        if (!force) {
-          await validate({ resume });
-        }
         await exportResume({
           outputPath: fileNameInput,
           resume,
