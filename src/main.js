@@ -8,7 +8,7 @@ import getFormatter from "./get-formatter";
 import getResume from "./get-resume";
 import getTheme from "./get-theme";
 import init from "./init";
-import serve from "./serve";
+import serveStatic from "./serve-static";
 import validate from "./validate";
 
 (async () => {
@@ -132,7 +132,7 @@ import validate from "./validate";
           name: themeName,
           resume,
         });
-        await serve({
+        await serveStatic({
           theme,
           open,
           port,
