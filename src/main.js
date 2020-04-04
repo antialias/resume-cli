@@ -111,13 +111,15 @@ import validate from "./validate";
   program
     .command("serve")
     .option("-p, --port <port>", "(default: 4000)", 4000)
-    .option("-s, --silent", "don't automatically open the browser", false)
-    .option("-d, --dir <path>", "public directory path", "public")
-    .description("Serve resume at http://localhost:4000/")
+    .option(
+      "--open",
+      "automatically open the browser to the preview url",
+      false
+    )
+    .description("Serve resume at http://localhost:<port>/")
     .action(
       async ({
-        dir,
-        silent,
+        open,
         port,
         parent: { force, remoteFallback, mime, theme: themeName, resume: path },
       }) => {
@@ -132,9 +134,8 @@ import validate from "./validate";
         });
         await serve({
           theme,
-          silent,
+          open,
           port,
-          dir,
           resume,
         });
       }
