@@ -5,7 +5,7 @@ import { promisify } from "util";
 import yn from "yn";
 
 // eslint-disable-next-line import/no-useless-path-segments
-import resumeJson from "../src/init-resume.json";
+import resumeJson from "./init-resume.json";
 
 const read = promisify(readCB);
 const exists = promisify(fs.exists);

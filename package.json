@@ -4,7 +4,7 @@
   "description": "The JSON Resume command line interface",
   "main": "build/main.js",
   "scripts": {
-    "prepare": "babel src -d build",
+    "prepare": "babel src -d build --copy-files",
     "dev": "babel-node src/main.js",
     "lint": "eslint src",
     "test": "npm run lint && npm run test-units",
