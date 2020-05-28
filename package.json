@@ -16,7 +16,7 @@
   },
   "license": "MIT",
   "bin": {
-    "resumed": "bin/resume.sh"
+    "resumed": "build/bin.js"
   },
   "preferGlobal": true,
   "dependencies": {
